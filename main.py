@@ -1,19 +1,27 @@
 '''
-Access Modifiers
+Inheritance
+    - Inheritance is the process by which one class takes on the attributes 
+      and methods of another.
+    - Newly formed classes are called child classes.
 
-Private members:
-    Private members of a class are denied access from the environment outside the class.
+    - The classes that child classes are derived from are called parent classes.
 
-Public members:
-    Public members are accessible from outside the class.
+    - Child classes inherit all of the parent’s attributes and behaviors 
+      but can also specify different behavior to follow.
 
-Protected members:
-    Protected members of a class are accessible from within the class and are also 
-    available to its sub-classes.
+    - The most basic type of class is an object, which generally all other classes 
+      inherit as their parent.
 
-*** All members in a Python class are public by default.
+'''
 
+'''
+class Node(object):
+    pass
 
+# In Python 3, this is the same as:
+
+class Node:
+    pass
 '''
 
 
@@ -21,12 +29,12 @@ class Node:
     def __init__(self, name, ip, mac):
         self.name = name  # Public
         self._ip = ip    # protected
-        self.__mac = mac  # private
+        self._mac = mac  # private
         self.__queue = []  # private
 
     # instance method
     def description(self):
-        return "Node <{}> with IP<{}> and MAC<{}>".format(self.name, self._ip, self.__mac)
+        return "Node <{}> with IP<{}> and MAC<{}>".format(self.name, self._ip, self._mac)
 
     # instance method
     def sendPacket(self, payload, dst):
@@ -40,15 +48,22 @@ class Node:
         return "Queue length is {}".format(len(self.__queue))
 
 
-n1 = Node('node 1', '192.168.1.2', 'C9:2A:4E:61:AD:C7')
+# WirelessNode inherites all attributes and methods of Node class
+class WirelessNode(Node):
+    def __init__(self, name, ip, mac, radio_range):
+        super().__init__(name, ip, mac)
+        self.radio_range = radio_range  # Public
+
+    # overriding instance method of parent class
+    def description(self):
+        return "WN <{}>, IP<{}>, MAC<{}>,RR<{}>".format(self.name, self._ip, self._mac, self.radio_range)
+
+    def getRadioRange(self):
+        return "RR of <{}> is <{}> meters.".format(self.name, self.radio_range)
+
+
+n1 = WirelessNode('node 1', '192.168.1.2', 'C9:2A:4E:61:AD:C7', 10)
 n2 = Node('node 2', '192.168.1.3', 'C9:2A:4E:61:AD:C8')
 
 print(n1.description())
-
-print(n1.name)
-
-print(n1._ip)
-
-print(n1.__mac)
-
-# print(n1._Node__mac)
+print(n2.description())
