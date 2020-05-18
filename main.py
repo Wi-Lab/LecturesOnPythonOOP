@@ -1,69 +1,24 @@
 '''
-Inheritance
-    - Inheritance is the process by which one class takes on the attributes 
-      and methods of another.
-    - Newly formed classes are called child classes.
-
-    - The classes that child classes are derived from are called parent classes.
-
-    - Child classes inherit all of the parent’s attributes and behaviors 
-      but can also specify different behavior to follow.
-
-    - The most basic type of class is an object, which generally all other classes 
-      inherit as their parent.
-
+    A Simple Event Driven Simulator
 '''
-
-'''
-class Node(object):
-    pass
-
-# In Python 3, this is the same as:
-
-class Node:
-    pass
-'''
+from scheduler import Scheduler
+from event import Event
+from handler import Handler
 
 
-class Node:
-    def __init__(self, name, ip, mac):
-        self.name = name  # Public
-        self._ip = ip    # protected
-        self._mac = mac  # private
-        self.__queue = []  # private
-
-    # instance method
-    def description(self):
-        return "Node <{}> with IP<{}> and MAC<{}>".format(self.name, self._ip, self._mac)
-
-    # instance method
-    def sendPacket(self, payload, dst):
-        return "Sending {} to node {}".format(payload, dst._ip)
-
-    # instance method that modifies attributes of instance
-    def receivePacket(self, newPacket):
-        self.queue.append(newPacket)
-
-    def queueLength(self):
-        return "Queue length is {}".format(len(self.__queue))
+class PrintHello(Handler):
+    def execute(self):
+        print("Hello from PrintHello Handler")
 
 
-# WirelessNode inherites all attributes and methods of Node class
-class WirelessNode(Node):
-    def __init__(self, name, ip, mac, radio_range):
-        super().__init__(name, ip, mac)
-        self.radio_range = radio_range  # Public
-
-    # overriding instance method of parent class
-    def description(self):
-        return "WN <{}>, IP<{}>, MAC<{}>,RR<{}>".format(self.name, self._ip, self._mac, self.radio_range)
-
-    def getRadioRange(self):
-        return "RR of <{}> is <{}> meters.".format(self.name, self.radio_range)
+class PrintGoodBye(Handler):
+    def execute(self):
+        print("GoodBye from PrintGoodBye Handler")
 
 
-n1 = WirelessNode('node 1', '192.168.1.2', 'C9:2A:4E:61:AD:C7', 10)
-n2 = Node('node 2', '192.168.1.3', 'C9:2A:4E:61:AD:C8')
+MyScheduler = Scheduler()
 
-print(n1.description())
-print(n2.description())
+MyScheduler.schedule(Event(PrintGoodBye(), 1.0))
+MyScheduler.schedule(Event(PrintHello(), 0.1))
+
+MyScheduler.run()
