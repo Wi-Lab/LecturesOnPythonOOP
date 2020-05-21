@@ -15,14 +15,14 @@
 from NSPyObject import NSPyObject
 from handler import Handler
 from event import Event
-from simulator import Simulator
 
 
 class Node(NSPyObject):
 
-    def __init__(self, address):
+    def __init__(self, scheduler, address):
         super().__init__()
         self._address = address
+        self.scheduler = scheduler
 
     '''
         input args:
@@ -40,7 +40,7 @@ class Node(NSPyObject):
             def execute(self):
                 # deliver packet to destination node when event time arrived
                 self.node.receive(self.packet)
-        Simulator().at(at, TransmitHandler(node, packet))
+        self.scheduler.schedule(Event(TransmitHandler(node, packet), at))
 
     '''
         input args:
@@ -48,4 +48,4 @@ class Node(NSPyObject):
     '''
 
     def receive(self, packet):
-        print("Node <{}> received Packet with payload <{}> at <{}>".format(self._address, packet, Simulator().now()))
+        print("Node <{}> received Packet with payload <{}> at <{}>".format(self._address, packet, self.scheduler._now))
