@@ -22,6 +22,9 @@ class Simulator(NSPyObject):
     def at(self, time, handler):
         Simulator._scheduler.schedule(Event(handler, time))
 
+    def after(self, duration, handler):  # Schedule an Event for <duration> seconds later
+        Simulator._scheduler.schedule(Event(handler, Simulator._scheduler._now+duration))
+
     def now(self):
         return Simulator._scheduler._now
 
