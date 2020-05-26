@@ -1,35 +1,28 @@
 '''
-Singleton
+Builder Pattern
 '''
 
 
 '''
-Method __new__ will take class reference as the first argument followed by arguments which are 
-passed to constructor(Arguments passed to call of class to create instance). 
-Method __new__ is responsible to create instance, so you can use this method to customize object creation.
-Typically method __new__ will return the created instance object reference. 
-Method __init__ will be called once __new__ method completed execution.
+Builder Pattern is a unique design pattern which helps in building complex object
+ using simple objects and uses an algorithmic approach. 
 '''
 
 
-class OnlyOne:
-
-    # class attribute
-    _instance = None
-
-    def __new__(cls, name):
-        if cls._instance is None:  # this is the first time we create an object of this type
-            cls._instance = super(OnlyOne, cls).__new__(cls)
-
-        return cls._instance
-
-    def __init__(self, name):
-        self.name = name
+class Packet:
+    def __init__(self, id, dst):
+        self.id = id
+        self.dst = dst
 
 
-o1 = OnlyOne("node1")
-print(o1)
-print(o1.name)
-o2 = OnlyOne("node2")
-print(o2)
-print(o2.name)
+p1 = Packet(1, 'node1')
+p2 = Packet(1, 'node2')
+p3 = Packet(1, 'node3')
+p4 = Packet(1, 'node4')
+p5 = Packet(1, 'node5')
+p6 = Packet(1, 'node6')
+p7 = Packet(1, 'node7')
+
+'''
+what if we add a new property to our Packet class?
+'''
