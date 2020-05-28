@@ -1,6 +1,7 @@
 
 from NSPyObject import NSPyObject
 from packet import Packet
+from packet import PacketType
 
 
 class PacketTypeNotFoundError(Exception):
@@ -18,7 +19,7 @@ class PacketTypeNotFoundError(Exception):
 class PacketFactory(NSPyObject):
 
     _instance = None
-    defaultSize = {"TCP": 2**10, "UDP": 2**9, "RTR": 2**8}
+    defaultSize = {PacketType.TCP: 2**10, PacketType.UDP: 2**9, PacketType.RTR: 2**8}
 
     def __new__(cls):
         if cls._instance is None:
@@ -28,14 +29,14 @@ class PacketFactory(NSPyObject):
     def __init__(self):
         pass
 
-    def create(self, p_type: str, size=0) -> Packet:
+    def create(self, p_type: PacketType, size=0) -> Packet:
         try:
-            if p_type == "TCP":
-                return Packet().type(p_type).size(size if size != 0 else PacketFactory.defaultSize.get(p_type))
-            elif p_type == "UDP":
-                return Packet().type(p_type).size(size if size != 0 else PacketFactory.defaultSize.get(p_type))
-            elif p_type == "RTR":
-                return Packet().type(p_type).size(size if size != 0 else PacketFactory.defaultSize.get(p_type))
+            if p_type == PacketType.TCP:
+                return Packet().type(PacketType.TCP).size(size if size != 0 else PacketFactory.defaultSize.get(PacketType.TCP))
+            elif p_type == PacketType.UDP:
+                return Packet().type(PacketType.UDP).size(size if size != 0 else PacketFactory.defaultSize.get(PacketType.UDP))
+            elif p_type == PacketType.RTR:
+                return Packet().type(PacketType.RTR).size(size if size != 0 else PacketFactory.defaultSize.get(PacketType.RTR))
             raise PacketTypeNotFoundError(p_type)
         except PacketTypeNotFoundError as e:
             print(e)

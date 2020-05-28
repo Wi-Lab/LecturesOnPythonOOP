@@ -1,5 +1,12 @@
 
 from NSPyObject import NSPyObject
+from enum import Enum
+
+
+class PacketType(Enum):
+    TCP = 1
+    UDP = 2
+    RTR = 3
 
 
 class Packet(NSPyObject):
@@ -9,7 +16,7 @@ class Packet(NSPyObject):
         self._uid = Packet.packetCount
         Packet.packetCount += 1
 
-    def type(self, type: str) -> 'Packet':
+    def type(self, type: PacketType) -> 'Packet':
         self._type = type
         return self
 
