@@ -13,8 +13,9 @@ node1 = Node('192.168.1.1')
 node2 = Node('192.168.1.2')
 node3 = Node('192.168.1.3')
 
+# what if we have a typo in pakcet creation
 node1.send(pf().create("UDP"), node2)
-node2.send(pf().create("RTR"), node1)
+node2.send(pf().create("RTr"), node1)
 
 
 Simulator().run()
