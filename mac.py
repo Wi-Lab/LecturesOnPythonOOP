@@ -4,6 +4,8 @@ from enum import Enum
 from packet import Packet
 from packet import PacketDir
 from packet import PacketDirNotFoundException
+from simulator import Simulator
+from handler import Handler
 
 
 class Duplexity(Enum):
@@ -37,12 +39,10 @@ class MacRecvTxPacketInTxRxStateException(Exception):
 
 
 class Mac(NSPyObject, OSILayer):
-    '''This class models a wireless pyhisical layer'''
+    '''This class models MAC layer'''
 
     def __init__(self):
         self._macStatus: MacStatus = MacStatus.IDLE
-        self._txBuffer = None
-        self._rxBuffer = None
 
     def duplexity(self, duplexity: Duplexity) -> 'Mac':
         self._duplexity = duplexity
@@ -81,25 +81,39 @@ class Mac(NSPyObject, OSILayer):
                 # This is not a valid state
                 raise MacRecvTxPacketInRxStateWithHalfDuplexException()
             else:  # mac has full duplex setting
-                # we need to store this packet in _txBuffer for transmission in future
-                self._txBuffer = packet
-                return
+
+                self._macStatus = MacStatus.RX_TX
+
+                class PacketSendHandler(Handler):
+                    def __init__(self, mac: 'Mac'):
+                        self._mac = mac
+
+                    def execute(self):
+                        self._mac.sent(packet)
+                Simulator().after(0.01, PacketSendHandler(self))
         elif self._macStatus == MacStatus.RX_TX:
             # this is not a valid state
             raise MacRecvTxPacketInRxStateWithHalfDuplexException()
 
         else:  # macStatus is IDLE
-            pass
+            self._macStatus = MacStatus.TX
+
+            class PacketSendHandler(Handler):
+                def __init__(self, mac: 'Mac'):
+                    self._mac = mac
+
+                def execute(self):
+                    self._mac.sent(packet)
+            Simulator().after(0.01, PacketSendHandler(self))
 
     def sent(self, packet: Packet):
         # packet has been sent
+        self._downTarget.recv(packet)
         # we need to set macStatus
         if self._macStatus == MacStatus.RX_TX:
             self._macStatus = MacStatus.RX
-            self._txBuffer = None
         elif self._macStatus == MacStatus.TX:
             self._macStatus = MacStatus.IDLE
-            self._txBuffer = None
         # now we need to notify upper layer that we have sent packet
         packet._handler.execute()
 

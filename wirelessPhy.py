@@ -4,6 +4,7 @@ from enum import Enum
 from packet import Packet
 from packet import PacketDir
 from packet import PacketDirNotFoundException
+from simulator import Simulator
 
 
 class Duplexity(Enum):
@@ -40,7 +41,7 @@ class WirelessPhy(NSPyObject, OSILayer):
         # Check packet direction first
         try:
             if packet._dir == PacketDir.DOWN:
-                self._downTarget.recv(packet)
+                print(f"delivered packet <{packet._uid}> to channel at {Simulator().now()}")
             elif packet._dir == PacketDir.UP:
                 self._upTarget.recv(packet)
             else:
