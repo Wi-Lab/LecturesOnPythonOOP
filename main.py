@@ -9,16 +9,14 @@ from simulator import Simulator
 from packet import Packet
 from packetFactory import PacketFactory as pf
 from packet import PacketType as pt
+from wirelessPhy import WirelessPhy
+from mac import Mac
+from application import Application
+from queue import Queue
 
-node1 = Node('192.168.1.1')
-node2 = Node('192.168.1.2')
-node3 = Node('192.168.1.3')
+node1 = Node().Phy(WirelessPhy()).Mac(Mac()).Queue(Queue(10)).App(Application(5))
 
-try:
-    node1.send(pf().create(pt.UDP), node2)
-    node2.send(pf().create(pt.RTR), node1)
-except Exception as e:
-    print(e)
-
+node1._app.start(1.0)
+node1._app.stop(10.0)
 
 Simulator().run()

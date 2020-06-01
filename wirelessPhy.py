@@ -40,7 +40,7 @@ class WirelessPhy(NSPyObject, OSILayer):
         # Check packet direction first
         try:
             if packet._dir == PacketDir.DOWN:
-                self._downTarget.recv(packet)
+                print(f"delivered packet <{packet._uid}> to channel")
             elif packet._dir == PacketDir.UP:
                 self._upTarget.recv(packet)
             else:

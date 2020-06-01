@@ -17,38 +17,61 @@ from handler import Handler
 from event import Event
 from simulator import Simulator
 from packet import Packet
+from wirelessPhy import WirelessPhy
+from mac import Mac
+from application import Application
+from queue import Queue
+
+
+class PhyNotDefinedYetException(Exception):
+
+    def __init__(self):
+        self.message = f"Physical not defined for node yet"
+        super().__init__(self.message)
+
+
+class MacNotDefinedYetException(Exception):
+
+    def __init__(self):
+        self.message = f"Mac Layer not defined for node yet"
+        super().__init__(self.message)
+
+
+class QueueNotDefinedYetException(Exception):
+
+    def __init__(self):
+        self.message = f"Queue Layer not defined for node yet"
+        super().__init__(self.message)
 
 
 class Node(NSPyObject):
 
-    def __init__(self, address, txRate=float(2**20)):  # default rate set to 1Mbps
+    def __init__(self):
         super().__init__()
-        self._address = address
-        self._transmissionRate = txRate
 
-    '''
-        input args:
-        packet: the packet that we want to transfer 
-        node: destination node 
-    '''
+    def Phy(self, phy: WirelessPhy):
+        self._phy = phy
+        return self
 
-    def send(self, packet: Packet, node: 'Node'):
-        class TransmitHandler(Handler):
-            def __init__(self, node, packet: Packet):
-                self.node = node
-                self.packet = packet
+    def Mac(self, mac: Mac):
+        if self._phy is None:
+            raise PhyNotDefinedYetException()
+        self._mac = mac
+        self._mac.down(self._phy)
+        self._phy.up(self._mac)
+        return self
 
-            def execute(self):
-                # deliver packet to destination node when event time arrived
-                self.node.receive(self.packet)
+    def Queue(self, queue: Queue):
+        if self._mac is None:
+            raise MacNotDefinedYetException()
+        self._queue = queue
+        self._queue.down(self._mac)
+        return self
 
-        # calculate txTime based on txRate and packet size
-        Simulator().after(packet._size/self._transmissionRate, TransmitHandler(node, packet))
-
-    '''
-        input args:
-        packet: the packet that we have received
-    '''
-
-    def receive(self, packet: Packet):
-        print("Node <{}> received Packet with size <{}> at <{}>".format(self._address, packet._size, Simulator().now()))
+    def App(self, app: Application):
+        if self._queue is None:
+            raise MacNotDefinedYetException()
+        self._app = app
+        self._app.down(self._queue)
+        self._mac.up(self._app)
+        return self
