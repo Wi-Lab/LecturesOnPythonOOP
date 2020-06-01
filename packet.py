@@ -51,3 +51,6 @@ class Packet(NSPyObject):
     def handler(self, handler: Handler) -> 'Packet':
         self._handler = handler
         return self
+
+    def __str__(self):
+        print(f"P  <{self._uid}> <{self._type}> <{self._size}>")

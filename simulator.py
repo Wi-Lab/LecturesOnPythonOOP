@@ -11,7 +11,7 @@ class Simulator(NSPyObject):
     '''
 
     _instance = None
-    _scheduler = None
+    _scheduler: Scheduler = None
 
     def __new__(cls):
         if cls._instance is None:  # this is the first time we create an object of this type
