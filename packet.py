@@ -1,6 +1,7 @@
 
 from NSPyObject import NSPyObject
 from enum import Enum
+from handler import Handler
 
 
 class PacketType(Enum):
@@ -45,4 +46,8 @@ class Packet(NSPyObject):
 
     def dir(self, dir: PacketDir) -> 'Packet':
         self._dir = dir
+        return self
+
+    def handler(self, handler: Handler) -> 'Packet':
+        self._handler = handler
         return self
